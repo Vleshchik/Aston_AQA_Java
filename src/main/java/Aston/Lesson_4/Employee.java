@@ -34,7 +34,7 @@ class Employee {
 
         employees[0] = new Employee("Ivanov Ivan", "Engineer", "ivivan@mailbox.com", "892312312", 30000, 30);
         employees[1] = new Employee("Petrov Petr", "Manager", "petrov@mailbox.com", "891234567", 40000, 42);
-        employees[2] = new Employee("Sidorov Alex", "Developer", "sidorov@mailbox.com", "890987654", 50000, 38);
+        employees[2] = new Employee("Sidorov Alex", "Developer", "sidorov@mailbox.com", "890987654", 50000, 32);
         employees[3] = new Employee("Kuznetsov Anton", "Designer", "kuznetsov@mailbox.com", "899876543", 35000, 45);
         employees[4] = new Employee("Smirnov Dmitry", "Analyst", "smirnov@mailbox.com", "898765432", 45000, 37);
 

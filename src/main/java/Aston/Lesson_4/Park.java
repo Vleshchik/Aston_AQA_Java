@@ -53,8 +53,8 @@ public class Park {
 
     public static void main(String[] args) {
         Park park = new Park("City Park");
-        park.addAttraction("Ferris Wheel", "10:00 - 18:00", 2000);
-        park.addAttraction("Roller Coaster", "11:00 - 19:00", 3000);
+        park.addAttraction("Ferris Wheel", "10:00 - 20:00", 2000);
+        park.addAttraction("Roller Coaster", "11:00 - 21:00", 3000);
         park.displayAttractions();
     }
 }
