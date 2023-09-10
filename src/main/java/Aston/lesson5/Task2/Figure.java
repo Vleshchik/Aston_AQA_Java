@@ -13,11 +13,11 @@ public class Figure {
         this.color = color;
     }
     void info(){
-        System.out.println(this.form);
-        System.out.println(this.border);
-        System.out.println(this.color);
-        System.out.println(this.perimeter);
-        System.out.println(this.square);
+        System.out.println("Фигура: " + this.form);
+        System.out.println("Цвет границы: " + this.border);
+        System.out.println("Цвет заливки: " + this.color);
+        System.out.println("Периметр: " + this.perimeter);
+        System.out.println("Площадь: " + this.square);
         System.out.println("----------------------");
     }
 }
