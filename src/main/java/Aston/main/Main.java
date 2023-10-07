@@ -1,20 +1,35 @@
 package Aston.main;
 import java.util.*;
+import java.util.stream.Collectors;
+
 public class Main {
     public static void main(String[] args) {
         /*Задание №1*/
         int[] numbers = generateRandomNumbers(100);
-        int countEven = countEvenNumbers(numbers);
-        System.out.println("Количество чётных чисел: " + countEven);
+        long count = Arrays.stream(numbers)
+                .filter(n -> n % 2 == 0)
+                .count();
+        System.out.println("Количество четных чисел: " + count);
         System.out.println("_________________________");
         /*Задание №2*/
-        List<String> collection = new ArrayList<>(Arrays.asList("Highload", "High", "Load", "Highload"));
-        int countHigh = countElement(collection, "High");
-        System.out.println("Количество элементов 'High': " + countHigh);
-        String firstElement = getFirstElement(collection);
-        System.out.println("Первый элемент: " + firstElement);
-        String lastElement = getLastElement(collection);
-        System.out.println("Последний элемент: " + lastElement);
+        List<String> collection = Arrays.asList("Highload", "High", "Load", "Highload");
+        // 2.1. Подсчет количества вхождений строки "High"
+        long count_2 = collection.stream()
+                .filter(str -> str.equals("High"))
+                .count();
+        System.out.println("Количество вхождений строки \"High\": " + count_2);
+
+        // 2.2. Определение первого элемента коллекции
+        String firstElement = collection.stream()
+                .findFirst()
+                .orElse("0");
+        System.out.println("Первый элемент коллекции: " + firstElement);
+
+        // 2.3. Возвращение последнего элемента коллекции
+        String lastElement = collection.stream()
+                .reduce((first, second) -> second)
+                .orElse("0");
+        System.out.println("Последний элемент коллекции: " + lastElement);
         System.out.println("_________________________");
         /*Задание №3*/
         String[] strings = {"f10", "f15", "f2", "f4", "f4"};
@@ -24,19 +39,17 @@ public class Main {
         /*Задание №5*/
         List<String> logins = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите логины (для завершения введите пустую строку):");
-        while (true) {
-            String login = scanner.nextLine();
-            if (login.isEmpty()) {
-                break;
-            }
+        System.out.println("Введите логины (пустая строка для завершения):");
+        String login;
+        while (!(login = scanner.nextLine()).isEmpty()) {
             logins.add(login);
         }
+        List<String> filteredLogins = logins.stream()
+                .filter(str -> str.startsWith("f"))
+                .collect(Collectors.toList());
         System.out.println("Логины, начинающиеся на букву 'f':");
-        for (String login : logins) {
-            if (login.startsWith("f")) {
-                System.out.println(login);
-            }
+        for (String filteredLogin : filteredLogins) {
+            System.out.println(filteredLogin);
         }
     }
     /*Задание №1*/
@@ -47,30 +60,5 @@ public class Main {
             numbers[i] = random.nextInt();
         }
         return numbers;
-    }
-    private static int countEvenNumbers(int[] numbers) {
-        int count = 0;
-        for (int number : numbers) {
-            if (number % 2 == 0) {
-                count++;
-            }
-        }
-        return count;
-    }
-    /*Задание №2*/
-    private static int countElement(List<String> collection, String element) {
-        return Collections.frequency(collection, element);
-    }
-    private static String getFirstElement(List<String> collection) {
-        if (!collection.isEmpty()) {
-            return collection.get(0);
-        }
-        return "0";
-    }
-    private static String getLastElement(List<String> collection) {
-        if (!collection.isEmpty()) {
-            return collection.get(collection.size() - 1);
-        }
-        return "0";
     }
 }
