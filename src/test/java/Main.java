@@ -9,28 +9,21 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Main {
     public static void main(String[] args) {
-        // Установка пути к драйверу Chrome
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
 
-        // Создание экземпляра WebDriver
         WebDriver driver = new ChromeDriver();
-        // Создание объекта Actions для выполнения действий с мышью
         Actions actions = new Actions(driver);
-        // Создание объекта WebDriverWait с таймаутом 10 секунд
-        WebDriverWait wait = new WebDriverWait(driver,10);
-        // Открытие сайта mts.by
+        WebDriverWait wait = new WebDriverWait(driver,5);
         driver.get("https://www.mts.by/");
-        // Ожидание загрузки страницы
         wait.until(ExpectedConditions.titleContains("МТС – мобильный оператор в Беларуси"));
         // Прокрутка страницы до блока "Онлайн пополнение без комиссии"
-        WebElement blockTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[text()='Онлайн пополнение без комиссии']")));
-        scrollToCenter(driver, blockTitle, actions);
-
+        //WebElement blockTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[6]/main/div/div[4]/div[3]/div/div/div[2]/section/div/h2")));
+        WebElement blockTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='pay__wrapper']//h2")));
         // Проверка названия блока "Онлайн пополнение без комиссии"
         System.out.println("Название блока: " + blockTitle.getText());
 
         // Прокрутка страницы до логотипов платежных систем
-        WebElement paymentLogos = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("payment-logos")));
+        WebElement paymentLogos = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='pay__partners']")));
         scrollToCenter(driver, paymentLogos, actions);
 
         // Проверка наличия логотипов платежных систем
@@ -39,7 +32,6 @@ public class Main {
         } else {
             System.out.println("Логотипы платежных систем не отображены");
         }
-
         // Прокрутка страницы до ссылки "Подробнее о сервисе"
         WebElement learnMoreLink = wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Подробнее о сервисе")));
         scrollToCenter(driver, learnMoreLink, actions);
@@ -52,18 +44,19 @@ public class Main {
         driver.navigate().back();
 
         // Прокрутка страницы до полей и кнопки "Продолжить"
-        WebElement serviceRadio = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("services")));
+        WebElement serviceRadio = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='pay__form']")));
         scrollToCenter(driver, serviceRadio, actions);
 
         // Заполнение полей и проверка работы кнопки "Продолжить"
         serviceRadio.click();
 
-        WebElement phoneNumberInput = driver.findElement(By.id("phoneNumber"));
+        WebElement phoneNumberInput = driver.findElement(By.xpath("//input[@id='connection-phone']"));
         phoneNumberInput.sendKeys("297777777");
 
-        WebElement continueButton = driver.findElement(By.xpath("//button[text()='Продолжить']"));
+        WebElement continueButton = driver.findElement(By.xpath("//form[@id='pay-connection']//button[contains(@class,'button button__default')]"));
         scrollToCenter(driver, continueButton, actions);
         continueButton.click();
+        System.out.println("Click!");
 
         // Закрытие браузера
         driver.quit();
