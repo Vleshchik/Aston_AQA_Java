@@ -6,97 +6,85 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 public class Main {
     public static void main(String[] args) {
-        // Установка пути к драйверу Chrome
-        System.setProperty("webdriver.chrome.driver", "путь_к_драйверу/chromedriver.exe");
-        // Создание экземпляра WebDriver
+        System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
         WebDriver driver = new ChromeDriver();
-        // Создание объекта Actions для выполнения действий с мышью
         Actions actions = new Actions(driver);
-        // Создание объекта WebDriverWait с таймаутом 10 секунд
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-        // Открытие сайта mts.by
+        WebDriverWait wait = new WebDriverWait(driver,5);
         driver.get("https://www.mts.by/");
-        // Ожидание загрузки страницы
-        wait.until(ExpectedConditions.titleContains("MTS"));
-        // Прокрутка страницы до блока "Онлайн пополнение без комиссии"
-        WebElement blockTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[text()='Онлайн пополнение без комиссии']")));
+        wait.until(ExpectedConditions.titleContains("МТС – мобильный оператор в Беларуси"));
+        WebElement continueButton = driver.findElement(By.xpath("//button[@class='cookie__close']"));
+        scrollToCenter(driver, continueButton, actions);
+        continueButton.click();
+        //Надписи в поле Услуги связи //input[contains(@placeholder,'Номер телефона')]
+        WebElement blockTitle = driver.findElement(By.id("connection-phone"));
         scrollToCenter(driver, blockTitle, actions);
-        // Проверка названия блока "Онлайн пополнение без комиссии"
-        System.out.println("Название блока: " + blockTitle.getText());
-        // Прокрутка страницы до логотипов платежных систем
-        WebElement paymentLogos = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("payment-logos")));
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle.getText());
+        WebElement blockTitle_2 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("///input[@id='connection-sum']")));
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle_2.getText());
+        WebElement blockTitle_3 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@placeholder='E-mail для отправки чека']")));
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle_3.getText());
+        //Надписи в поле Домашний интернет
+        WebElement blockTitle = driver.findElement(By.id("connection-phone"));
+        scrollToCenter(driver, blockTitle, actions);
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle.getText());
+        WebElement blockTitle_2 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("///input[@id='connection-sum']")));
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle_2.getText());
+        WebElement blockTitle_3 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@placeholder='E-mail для отправки чека']")));
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle_3.getText());
+        //Надписи в поле Рассрочка
+        WebElement blockTitle = driver.findElement(By.id("connection-phone"));
+        scrollToCenter(driver, blockTitle, actions);
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle.getText());
+        WebElement blockTitle_2 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("///input[@id='connection-sum']")));
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle_2.getText());
+        WebElement blockTitle_3 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@placeholder='E-mail для отправки чека']")));
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle_3.getText());
+        //Надписи в поле Задолженность
+        WebElement blockTitle = driver.findElement(By.id("connection-phone"));
+        scrollToCenter(driver, blockTitle, actions);
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle.getText());
+        WebElement blockTitle_2 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("///input[@id='connection-sum']")));
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle_2.getText());
+        WebElement blockTitle_3 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@placeholder='E-mail для отправки чека']")));
+        System.out.println("Надпись в незаполненном поле Услуги связи: " + blockTitle_3.getText());
+/*
+        //задание 2
+        WebElement serviceRadio = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='pay__form']")));
+        scrollToCenter(driver, serviceRadio, actions);
+
+        serviceRadio.click();
+        WebElement phoneNumberInput = driver.findElement(By.xpath("//input[@id='connection-phone']"));
+        phoneNumberInput.sendKeys("297777777");
+        WebElement sumOfPaymentInput = driver.findElement(By.xpath("///input[@id='connection-sum']"));
+        sumOfPaymentInput.sendKeys("10");
+        WebElement continueButton = driver.findElement(By.xpath("//form[@id='pay-connection']//button[contains(@class,'button button__default')]"));
+        scrollToCenter(driver, continueButton, actions);
+        continueButton.click();
+        System.out.println("Click!");
+        System.out.println("Текущая страница: " + driver.getCurrentUrl());
+
+        WebElement paymentLogos = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='pay__partners']")));
         scrollToCenter(driver, paymentLogos, actions);
-        // Проверка наличия логотипов платежных систем
+
         if (paymentLogos.isDisplayed()) {
             System.out.println("Логотипы платежных систем отображены");
         } else {
             System.out.println("Логотипы платежных систем не отображены");
         }
-        // Прокрутка страницы до ссылки "Подробнее о сервисе"
-        WebElement learnMoreLink = wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Подробнее о сервисе")));
-        scrollToCenter(driver, learnMoreLink, actions);
-        // Проверка работы ссылки "Подробнее о сервисе"
-        learnMoreLink.click();
-        System.out.println("Текущая страница: " + driver.getCurrentUrl());
-        // Возврат на предыдущую страницу
-        driver.navigate().back();
-        // Прокрутка страницы до полей и кнопки "Продолжить"
-        WebElement serviceRadio = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("services")));
-        scrollToCenter(driver, serviceRadio, actions);
-        // Заполнение полей и проверка работы кнопки "Продолжить"
-        serviceRadio.click();
-        WebElement phoneNumberInput = driver.findElement(By.id("phoneNumber"));
-        phoneNumberInput.sendKeys("297777777");
-        WebElement continueButton = driver.findElement(By.xpath("//button[text()='Продолжить']"));
-        scrollToCenter(driver, continueButton, actions);
-        continueButton.click();
-        // Проверка надписей в незаполненных полях каждого варианта оплаты услуг
-        WebElement servicePaymentForm = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("servicePaymentForm")));
-        scrollToCenter(driver, servicePaymentForm, actions);
-        System.out.println("Надписи в незаполненных полях для варианта 'Услуги связи':");
-        checkEmptyFieldLabels(servicePaymentForm);
-        // Заполнение полей и проверка работы кнопки "Продолжить" для варианта "Услуги связи"
-        WebElement cardNumberInput = driver.findElement(By.id("cardNumber"));
-        cardNumberInput.sendKeys("1234567890123456");
-        WebElement expirationInput = driver.findElement(By.id("expiration"));
-        expirationInput.sendKeys("12/25");
-        WebElement cvvInput = driver.findElement(By.id("cvv"));
-        cvvInput.sendKeys("123");
-        WebElement continueButton2 = driver.findElement(By.xpath("//button[text()='Продолжить']"));
-        scrollToCenter(driver, continueButton2, actions);
-        continueButton2.click();
-        // Проверка корректности отображения суммы, номера телефона и надписей в незаполненных полях в появившемся окне
-        WebElement paymentSummary = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("paymentSummary")));
-        scrollToCenter(driver, paymentSummary, actions);
-        System.out.println("Сумма: " + paymentSummary.findElement(By.id("amount")).getText());
-        System.out.println("Номер телефона: " + paymentSummary.findElement(By.id("phoneNumber")).getText());
-        System.out.println("Надписи в незаполненных полях для ввода реквизитов карты:");
-        checkEmptyFieldLabels(paymentSummary);
-        // Проверка наличия иконок платежных систем
-        WebElement paymentLogos2 = paymentSummary.findElement(By.className("payment-logos"));
-        if (paymentLogos2.isDisplayed()) {
-            System.out.println("Иконки платежных систем отображены");
-        } else {
-            System.out.println("Иконки платежных систем не отображены");
-        }
-        // Закрытие браузера
-        driver.quit();
+
+
+        driver.quit();*/
     }
-    // Метод для прокрутки элемента в центр видимой области
+
+
     public static void scrollToCenter(WebDriver driver, WebElement element, Actions actions) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].scrollIntoView({block: 'center', inline: 'center'});", element);
         actions.moveToElement(element).perform();
     }
     // Метод для проверки надписей в незаполненных полях
-    public static void checkEmptyFieldLabels(WebElement form) {
-        java.util.List<WebElement> emptyFields = form.findElements(By.xpath(".//input[@required and @value='']"));
-        for (WebElement field : emptyFields) {
-            String labelText = field.getAttribute("aria-labelledby");
-            WebElement label = form.findElement(By.id(labelText));
-            System.out.println(label.getText());
-        }
-    }
+
 }
