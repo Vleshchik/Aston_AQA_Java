@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -55,7 +56,6 @@ public class Main {
         //задание 2
         WebElement serviceRadio = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='pay__form']")));
         scrollToCenter(driver, serviceRadio, actions);
-
         serviceRadio.click();
         WebElement phoneNumberInput = driver.findElement(By.xpath("//input[@id='connection-phone']"));
         phoneNumberInput.sendKeys("297777777");
@@ -64,18 +64,29 @@ public class Main {
         WebElement continueButton = driver.findElement(By.xpath("//form[@id='pay-connection']//button[contains(@class,'button button__default')]"));
         scrollToCenter(driver, continueButton, actions);
         continueButton.click();
-        System.out.println("Click!");
-        WebElement checkSumOfPaymentInput = driver.findElement(By.xpath("//p[contains(class,'header__payment-amount')]"));
-        System.out.println("Введенная сумма: 10. Отображаемая в шапке сумма: " + checkSumOfPaymentInput.getText());
-        WebElement payButton = driver.findElement(By.xpath("//form[@id='pay-connection']//button[contains(@class, 'colored disabled ng-star-inserted')]"));
-        System.out.println("Введенная сумма: 10. Отображаемая на кнопке сумма: " + payButton.getText());
-        WebElement paymentLogos = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='pay__partners']")));
-        scrollToCenter(driver, paymentLogos, actions);
-        if (paymentLogos.isDisplayed()) {
-            System.out.println("Логотипы платежных систем отображены");
-        } else {
-            System.out.println("Логотипы платежных систем не отображены");
-        }
+
+        WebElement paymentFrame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//iframe[@src='https://checkout.bepaid.by/widget_v2/index.html']")));
+        driver.switchTo().frame(paymentFrame);
+        WebElement checkSumOfPayment = driver.findElement(By.xpath("//p[@class='header__payment-amount']"));
+        System.out.println("Введенная сумма: 10. Отображаемая в шапке сумма: " + checkSumOfPayment.getAttribute("innerHTML"));
+        WebElement payButton = driver.findElement(By.xpath("//button[@class='colored disabled ng-star-inserted']"));
+        System.out.println("Введенная сумма: 10. Отображаемая на кнопке сумма: " + payButton.getAttribute("innerHTML"));
+        System.out.println("___________________________________________________________________");
+        WebElement blockTitleCardNumber = driver.findElement(By.xpath("//label[@class='ng-tns-c46-1 ng-star-inserted']"));
+        System.out.println("Надпись в незаполненном поле номер карты: " + blockTitleCardNumber.getAttribute("innerHTML"));
+        WebElement blockTitleDurationPeriod = driver.findElement(By.xpath("//label[@class='ng-tns-c46-4 ng-star-inserted']"));
+        System.out.println("Надпись в незаполненном поле срок действия: " + blockTitleDurationPeriod.getAttribute("innerHTML"));
+        WebElement blockTitleCVC = driver.findElement(By.xpath("//label[@class='ng-tns-c46-5 ng-star-inserted']"));
+        System.out.println("Надпись в незаполненном поле CVC: " + blockTitleCVC.getAttribute("innerHTML"));
+        WebElement blockTitleCardholder = driver.findElement(By.xpath("//label[@class='ng-tns-c46-3 ng-star-inserted']"));
+        System.out.println("Надпись в незаполненном поле Имя держателя (как на карте): " + blockTitleCardholder.getAttribute("innerHTML"));
+        System.out.println("___________________________________________________________________");
+        WebElement logos = driver.findElement(By.xpath("//div[@class='cards-brands ng-tns-c46-1']"));
+        List<WebElement> paymentLogos = logos.findElements(By.tagName("img"));
+
+        for (WebElement paymentLogo : paymentLogos) {
+            System.out.println(paymentLogo.getAttribute("src"));}
+
         driver.quit();
     }
     public static void scrollToCenter(WebDriver driver, WebElement element, Actions actions) {
