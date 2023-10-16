@@ -3,6 +3,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -20,6 +21,7 @@ public class Main {
         driver.manage().window().maximize();
         homePage = PageFactory.initElements(driver, HomePage.class);
         cartPage = PageFactory.initElements(driver, CartPage.class);
+
     }
 
     @Test
@@ -28,25 +30,25 @@ public class Main {
         homePage.open();
 
         // Добавление товара в корзину
-        homePage.addToCart("Название товара 1");
-        homePage.addToCart("Название товара 2");
-        homePage.addToCart("Название товара 3");
+        homePage.addToCart(1);
+        homePage.addToCart(2);
+        homePage.addToCart(3);
 
         // Переход в корзину
         homePage.goToCart();
 
         // Проверка названий товаров в корзине
-        Assert.assertTrue(cartPage.isProductInCart("Название товара 1"));
-        Assert.assertTrue(cartPage.isProductInCart("Название товара 2"));
-        Assert.assertTrue(cartPage.isProductInCart("Название товара 3"));
+        Assert.assertTrue(cartPage.isProductInCart(1));
+        Assert.assertTrue(cartPage.isProductInCart(2));
+        Assert.assertTrue(cartPage.isProductInCart(3));
 
         // Проверка количества товаров в корзине
         Assert.assertEquals(cartPage.getProductsCount(), 3);
 
         // Проверка цены каждого товара в корзине
-        Assert.assertEquals(cartPage.getProductPrice("Название товара 1"), "1000 руб.");
-        Assert.assertEquals(cartPage.getProductPrice("Название товара 2"), "2000 руб.");
-        Assert.assertEquals(cartPage.getProductPrice("Название товара 3"), "3000 руб.");
+        Assert.assertEquals(cartPage.getProductPrice(1), "1000 руб.");
+        Assert.assertEquals(cartPage.getProductPrice(2), "2000 руб.");
+        Assert.assertEquals(cartPage.getProductPrice(3), "3000 руб.");
 
         // Проверка общей суммы товаров в корзине
         Assert.assertEquals(cartPage.getTotalPrice(), "6000 руб.");

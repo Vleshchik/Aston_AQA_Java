@@ -1,10 +1,12 @@
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HomePage {
     private WebDriver driver;
-
+    WebDriverWait wait = new WebDriverWait(driver,5);
     private static HomePage instance;
 
     private HomePage(WebDriver driver) {
@@ -20,16 +22,18 @@ public class HomePage {
 
     public void open() {
         driver.get("https://www.wildberries.ru/");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//header/div[1]/div[2]/div[1]/a[1]/img[1]")));
     }
 
-    public void addToCart(String productName) {
-        WebElement product = driver.findElement(By.xpath("//div[contains(text(),'" + productName + "')]/ancestor::div[@class='j-card-item']"));
-        WebElement addToCartButton = product.findElement(By.xpath(".//button[contains(text(),'В корзину')]"));
+    public void addToCart(int article) {
+        WebElement product = driver.findElement(By.xpath("//body/div[1]/main[1]/div[2]/div[1]/div[2]/div[1]/div[3]/div[2]/div[1]/article["+article+"]/div[1]/a[1]"));
+        WebElement addToCartButton = product.findElement(By.xpath("//body/div[1]/main[1]/div[2]/div[1]/div[2]/div[1]/div[3]/div[2]/div[1]/article["+article+"]/div[1]/div[3]/p[3]/a[1]"));
         addToCartButton.click();
     }
 
     public void goToCart() {
-        WebElement cartButton = driver.findElement(By.xpath("//a[contains(@class,'header-actions__button_type_cart')]"));
+        WebElement cartButton = driver.findElement(By.xpath("//header/div[1]/div[2]/div[2]/div[3]/a[1]"));
         cartButton.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//header/div[1]/div[2]/div[1]/a[1]/img[1]")));
     }
 }

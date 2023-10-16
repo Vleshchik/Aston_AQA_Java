@@ -1,10 +1,10 @@
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class CartPage {
     private WebDriver driver;
-
     private static CartPage instance;
 
     private CartPage(WebDriver driver) {
@@ -18,24 +18,24 @@ public class CartPage {
         return instance;
     }
 
-    public boolean isProductInCart(String productName) {
-        WebElement product = driver.findElement(By.xpath("//div[contains(text(),'" + productName + "')]/ancestor::div[@class='cart-list-item']"));
+    public boolean isProductInCart(int productName) {
+        WebElement product = driver.findElement(By.xpath("//body/div[1]/main[1]/div[2]/div[1]/div[4]/div[1]/div[1]/form[1]/div[1]/div[1]/div[2]/div[1]/div[2]/div[1]/div[1]/div["+productName+"]/div[1]"));
         return product.isDisplayed();
     }
 
     public int getProductsCount() {
-        WebElement productsCountElement = driver.findElement(By.xpath("//span[@class='cart-detailed__count']"));
+        WebElement productsCountElement = driver.findElement(By.xpath("//body[1]/div[1]/main[1]/div[2]/div[1]/div[4]/div[1]/div[1]/form[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/span[1]"));
         return Integer.parseInt(productsCountElement.getText());
     }
 
-    public String getProductPrice(String productName) {
-        WebElement product = driver.findElement(By.xpath("//div[contains(text(),'" + productName + "')]/ancestor::div[@class='cart-list-item']"));
-        WebElement priceElement = product.findElement(By.xpath(".//span[@class='price']"));
+    public String getProductPrice(int productName) {
+        WebElement product = driver.findElement(By.xpath("//body/div[1]/main[1]/div[2]/div[1]/div[4]/div[1]/div[1]/form[1]/div[1]/div[1]/div[2]/div[1]/div[2]/div[1]/div[1]/div["+productName+"]/div[1]"));
+        WebElement priceElement = product.findElement(By.xpath(".//div[@class='list-item__price-new']"));
         return priceElement.getText();
     }
 
     public String getTotalPrice() {
-        WebElement totalPriceElement = driver.findElement(By.xpath("//div[@class='cart-summary__sum-price']/span[@class='price']"));
+        WebElement totalPriceElement = driver.findElement(By.xpath("//body/div[1]/main[1]/div[2]/div[1]/div[4]/div[1]/div[1]/form[1]/div[2]/div[1]/div[1]/div[1]/div[2]/p[1]/span[2]/span[1]"));
         return totalPriceElement.getText();
     }
 }
