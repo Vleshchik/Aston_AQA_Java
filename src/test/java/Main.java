@@ -48,12 +48,12 @@ public class Main {
         Assert.assertEquals(cartPage.getProductsCount(), 3);
 
         // Проверка цены каждого товара в корзине
-        Assert.assertEquals(cartPage.getProductPrice(1), "1000 руб.");
-        Assert.assertEquals(cartPage.getProductPrice(2), "2000 руб.");
-        Assert.assertEquals(cartPage.getProductPrice(3), "3000 руб.");
+        Assert.assertEquals(cartPage.getProductPrice(1), HomePage.prices[0]);
+        Assert.assertEquals(cartPage.getProductPrice(2), HomePage.prices[1]);
+        Assert.assertEquals(cartPage.getProductPrice(3), HomePage.prices[2]);
 
         // Проверка общей суммы товаров в корзине
-        Assert.assertEquals(cartPage.getTotalPrice(), "6000 руб.");
+        Assert.assertEquals(cartPage.getTotalPrice(), HomePage.totalPrice);
     }
 
     @AfterClass
@@ -62,5 +62,3 @@ public class Main {
     }
 
 }
-
-
