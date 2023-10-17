@@ -1,19 +1,14 @@
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HomePage {
     private WebDriver driver;
-    WebDriverWait wait = new WebDriverWait(driver,5);
-    Actions actions = new Actions(driver);
+    private WebDriverWait wait;
+    private Actions actions;
     private static HomePage instance;
 
-    private HomePage(WebDriver driver) {
+    public HomePage(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver,5);
+        this.actions = new Actions(driver);
     }
 
     public static synchronized HomePage getInstance(WebDriver driver) {
