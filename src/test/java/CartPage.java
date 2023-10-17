@@ -7,11 +7,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class CartPage {
     private WebDriver driver;
-    Actions actions = new Actions(driver);
+    private Actions actions;
     private static CartPage instance;
 
-    private CartPage(WebDriver driver) {
+    public CartPage(WebDriver driver) {
         this.driver = driver;
+        this.actions = new Actions(driver);
     }
 
     public static synchronized CartPage getInstance(WebDriver driver) {
@@ -22,7 +23,7 @@ public class CartPage {
     }
 
     public boolean isProductInCart(int productName) {
-        WebElement product = driver.findElement(By.xpath("//body/div[1]/main[1]/div[2]/div[1]/div[4]/div[1]/div[1]/form[1]/div[1]/div[1]/div[2]/div[1]/div[2]/div[1]/div[1]/div["+productName+"]/div[1]"));
+        WebElement product = driver.findElement(By.xpath("//body/div[1]/main[1]/div[2]/div[1]/div[4]/div[1]/div[1]/form[1]/div[1]/div[1]/div[2]/div[1]/div[2]/div[1]/div[1]/div[" + productName + "]/div[1]"));
         scrollToCenter(driver, product, actions);
         return product.isDisplayed();
     }
@@ -33,7 +34,7 @@ public class CartPage {
     }
 
     public String getProductPrice(int productName) {
-        WebElement product = driver.findElement(By.xpath("//body/div[1]/main[1]/div[2]/div[1]/div[4]/div[1]/div[1]/form[1]/div[1]/div[1]/div[2]/div[1]/div[2]/div[1]/div[1]/div["+productName+"]/div[1]"));
+        WebElement product = driver.findElement(By.xpath("//body/div[1]/main[1]/div[2]/div[1]/div[4]/div[1]/div[1]/form[1]/div[1]/div[1]/div[2]/div[1]/div[2]/div[1]/div[1]/div[" + productName + "]/div[1]"));
         WebElement priceElement = product.findElement(By.xpath(".//div[@class='list-item__price-new']"));
         return priceElement.getText();
     }
@@ -42,6 +43,7 @@ public class CartPage {
         WebElement totalPriceElement = driver.findElement(By.xpath("//body/div[1]/main[1]/div[2]/div[1]/div[4]/div[1]/div[1]/form[1]/div[2]/div[1]/div[1]/div[1]/div[2]/p[1]/span[2]/span[1]"));
         return totalPriceElement.getText();
     }
+
     public static void scrollToCenter(WebDriver driver, WebElement element, Actions actions) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].scrollIntoView({block: 'center', inline: 'center'});", element);
