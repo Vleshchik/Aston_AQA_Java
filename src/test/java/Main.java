@@ -1,18 +1,21 @@
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 
+import java.io.FileReader;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-
     public static void main(String[] args) {
         // Установите путь к драйверу Chrome
-        System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
 
         // Инициализация драйвера Selenium
         WebDriver driver = new ChromeDriver();
@@ -23,37 +26,50 @@ public class Main {
         // Логин (если необходимо)
         // ...
 
-        // Получение списка методов из папки Request Methods
-        String[] methods = {"get", "post", "put", "patch", "delete"};
+        try {
+            // Чтение JSON-файла с методами
+            JSONParser parser = new JSONParser();
+            Object obj = parser.parse(new FileReader("src/main/resources/Postman Echo.postman_collection.json"));
 
-        // Цикл по методам
-        for (String method : methods) {
-            // Клик по методу
-            WebElement methodElement = driver.findElement(By.xpath("//a[@href='https://postman-echo.com/" + method + "']"));
-            methodElement.click();
+            if (obj instanceof JSONArray) {
+                JSONArray methodsArray = (JSONArray) obj;
 
-            // Ожидание загрузки страницы с результатами
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+                // Цикл по методам
+                for (Object method : methodsArray) {
+                    JSONObject methodObj = (JSONObject) method;
+                    String url = (String) methodObj.get("url");
 
-            // Получение тела ответа
-            WebElement responseBody = driver.findElement(By.xpath("//pre[@class='response']"));
+                    // Клик по методу
+                    WebElement methodElement = driver.findElement(By.xpath("//a[@href='" + url + "']"));
+                    methodElement.click();
 
-            // Получение кода ответа
-            WebElement responseCode = driver.findElement(By.xpath("//span[@class='code']"));
+                    // Ожидание загрузки страницы с результатами
+                    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
-            // Проверка тела ответа с использованием REST Assured
-            Response response = RestAssured.request(method, "https://postman-echo.com/" + method);
-            String expectedResponseBody = response.getBody().asString();
-            String actualResponseBody = responseBody.getText();
-            Assert.assertEquals(expectedResponseBody, actualResponseBody);
+                    // Получение тела ответа
+                    WebElement responseBody = driver.findElement(By.xpath("//pre[@class='response']"));
 
-            // Проверка кода ответа с использованием REST Assured
-            int expectedResponseCode = response.getStatusCode();
-            int actualResponseCode = Integer.parseInt(responseCode.getText());
-            Assert.assertEquals(expectedResponseCode, actualResponseCode);
+                    // Получение кода ответа
+                    WebElement responseCode = driver.findElement(By.xpath("//span[@class='code']"));
 
-            // Возврат на страницу с методами
-            driver.navigate().back();
+                    // Проверка тела ответа с использованием REST Assured
+                    Response response = RestAssured.get(url);
+                    String expectedResponseBody = response.getBody().asString();
+                    String actualResponseBody = responseBody.getText();
+                    Assert.assertEquals(expectedResponseBody, actualResponseBody);
+
+                    // Проверка кода ответа с использованием REST Assured
+                    int expectedResponseCode = response.getStatusCode();
+                    int actualResponseCode = Integer.parseInt(responseCode.getText());
+                    Assert.assertEquals(expectedResponseCode, actualResponseCode);
+
+                    // Возврат на страницу с методами
+                    driver.navigate().back();
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         // Закрытие браузера
