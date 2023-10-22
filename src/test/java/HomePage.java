@@ -5,57 +5,94 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.Wait;
 
-import static java.lang.Integer.parseInt;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
+
 
 public class HomePage {
-    public static int totalPrice;
     private WebDriver driver;
-    private WebDriverWait wait;
+    private Wait<WebDriver> wait;
+    private JavascriptExecutor js;
     private Actions actions;
-    private static HomePage instance;
-    private String priceText;
-    static String[] prices;
+    private List<WebElement> itemNames;
+    private List<WebElement> itemPrices;
+    private List<WebElement> itemWrappers;
+    private WebElement basketLink;
+    private WebElement items;
+    private WebElement itemWrapper;
+    private WebElement addToBasketBtn;
 
 
-
-    public HomePage(WebDriver driver) {
+    HomePage(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver,5);
-        this.actions = new Actions(driver);
     }
 
-    public static synchronized HomePage getInstance(WebDriver driver) {
-        if (instance == null) {
-            instance = new HomePage(driver);
-        }
-        return instance;
-    }
-
-    public void open() {
+    void open() {
         driver.get("https://www.wildberries.ru/");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//header/div[1]/div[2]/div[1]/a[1]/img[1]")));
+        wait = new WebDriverWait(driver, 5);
+        js = (JavascriptExecutor) driver;
+        actions = new Actions(driver);
     }
 
-    public void addToCart(int article) {
-        WebElement product = driver.findElement(By.xpath("//body[@class='ru']/div[@class='wrapper']/main[@id='body-layout']/div[@id='mainContainer']/div[@id='app']/div/div[@class='main-page']/div[@class='main-page__blocks-wrap']/div[@id='ZjZmMDU3ZjItNzVmOC00MGNjLTNlMzQtYTA4YjkxODAzZThj']/div[@class='goods__list']/article["+article+"]/div[1]/a[1]"));
-        scrollToCenter(driver, product, actions);
-        WebElement productPrice = driver.findElement(By.xpath("/html[1]/body[1]/div[1]/main[1]/div[2]/div[1]/div[2]/div[1]/div[3]/div[2]/div[1]/article[1]/div[1]/div[2]/p[1]/span[1]/ins[1]"));
-        prices[article-1] = productPrice.getText();
-        priceText = productPrice.getText().replaceAll("[^0-9.]", "");
-        totalPrice += parseInt(priceText);
-        WebElement addToCartButton = product.findElement(By.xpath("//div[@id='ZjZmMDU3ZjItNzVmOC00MGNjLTNlMzQtYTA4YjkxODAzZThj']//article["+article+"]//div[1]//div[3]//p[3]//a[1]"));
-        addToCartButton.click();
+    void initElements() {
+        //ждем отображения продуктов и записываем в items
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class,'main-page__items')]")));
+        items = driver.findElement(By.xpath("//div[contains(@class,'main-page__items')]"));
+
+        //скроллим до items
+        js.executeScript("arguments[0].scrollIntoView();",items);
+
+        //ждем отображения названия, стоимости
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@class='product-card__name']")));
     }
 
-    public void goToCart() {
-        WebElement cartButton = driver.findElement(By.xpath("//header/div[1]/div[2]/div[2]/div[3]/a[1]"));
-        cartButton.click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//header/div[1]/div[2]/div[1]/a[1]/img[1]")));
+    List<WebElement> getItemNames() {
+        itemNames = driver.findElements(By.xpath("//*[@class='product-card__name']"));
+        Collections.reverse(itemNames.subList(0,3));
+        return itemNames.subList(0,3);
     }
-    public static void scrollToCenter(WebDriver driver, WebElement element, Actions actions) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].scrollIntoView({block: 'center', inline: 'center'});", element);
-        actions.moveToElement(element).perform();
+
+    List<WebElement> getItemPrices() {
+        itemPrices = driver.findElements(By.xpath("//*[contains(@class,'price__lower-price')]"));
+        Collections.reverse(itemPrices.subList(0,3));
+        return itemPrices.subList(0,3);
     }
+
+    WebElement getItemsWrapper(int i) {
+        itemWrappers = driver.findElements(By.xpath("//*[@class='product-card__wrapper']"));
+        return itemWrappers.get(i);
+    }
+
+    WebElement getAddButtons(int i) {
+        List<WebElement> addButtons = driver.findElements(By.xpath("//*[contains(@class,'product-card__add-basket')]"));
+        return addButtons.get(i);
+    }
+
+
+
+    void addItem(int number) {
+        itemWrapper = getItemsWrapper(number);
+        actions.moveToElement(itemWrapper).perform();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(@class, 'btn-main-sm')]")));
+        addToBasketBtn = getAddButtons(number);
+        addToBasketBtn.click();
+        try {
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(@class, 'popup-list-of-sizes')]//ul/li[1]")));
+            driver.findElement(By.xpath("//*[contains(@class, 'popup-list-of-sizes')]//ul/li[1]")).click();
+        }
+        catch (TimeoutException timeoutException){
+            timeoutException.getStackTrace();
+        }
+    }
+
+    void openBasket() {
+        basketLink = driver.findElement(By.xpath("//*[@id='basketContent']//*[@href='/lk/basket']"));
+        basketLink.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".item-info__item-name")));
+    }
+
 }
