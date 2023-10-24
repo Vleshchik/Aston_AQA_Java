@@ -7,8 +7,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.Wait;
-
-import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,8 +38,8 @@ public class HomePage {
 
     void initElements() {
         //ждем отображения продуктов и записываем в items
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class,'main-page__items')]")));
-        items = driver.findElement(By.xpath("//div[contains(@class,'main-page__items')]"));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class,'main-page__content')]")));
+        items = driver.findElement(By.xpath("//div[contains(@class,'main-page__content')]"));
 
         //скроллим до items
         js.executeScript("arguments[0].scrollIntoView();",items);
@@ -58,6 +56,7 @@ public class HomePage {
 
     List<WebElement> getItemPrices() {
         itemPrices = driver.findElements(By.xpath("//*[contains(@class,'price__lower-price')]"));
+
         Collections.reverse(itemPrices.subList(0,3));
         return itemPrices.subList(0,3);
     }
@@ -71,13 +70,10 @@ public class HomePage {
         List<WebElement> addButtons = driver.findElements(By.xpath("//*[contains(@class,'product-card__add-basket')]"));
         return addButtons.get(i);
     }
-
-
-
     void addItem(int number) {
         itemWrapper = getItemsWrapper(number);
         actions.moveToElement(itemWrapper).perform();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(@class, 'btn-main-sm')]")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.product-card__add-basket.j-add-to-basket.btn-main-sm")));
         addToBasketBtn = getAddButtons(number);
         addToBasketBtn.click();
         try {
@@ -88,11 +84,9 @@ public class HomePage {
             timeoutException.getStackTrace();
         }
     }
-
     void openBasket() {
         basketLink = driver.findElement(By.xpath("//*[@id='basketContent']//*[@href='/lk/basket']"));
         basketLink.click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".item-info__item-name")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(@class, 'list-item__good')]")));
     }
-
 }
