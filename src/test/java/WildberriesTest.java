@@ -1,32 +1,29 @@
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.WebElement;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-
-
-
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class WildberriesTest
-{
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class WildberriesTest {
     static WebDriver driver;
+    public List<String> itemNamesExpected;
+    public List<String> itemPricesExpected;
+    public List<String> itemPricesActual;
+    public List<String> itemNamesActual;
+    private static Basket basket;
+
     @BeforeAll
     public static void setUp() {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
-    }
-    @BeforeEach
-    void setupTest() {
         driver = new ChromeDriver();
         driver.manage().window().maximize();
+        basket = new Basket(driver);
     }
-
     @Test
+    @Order(1)
     public void selectProductsTest() {
         HomePage homePage = new HomePage(driver);
         homePage.open();
@@ -34,33 +31,38 @@ public class WildberriesTest
         homePage.addItem(0);
         homePage.addItem(1);
         homePage.addItem(2);
-        List<String> itemNamesExpected = homePage.getItemNames().stream().map(WebElement -> WebElement.getText().substring(2)).collect(Collectors.toList());
-        List<String> itemPricesExpected = homePage.getItemPrices().stream().map(WebElement::getText).collect(Collectors.toList());
+        itemNamesExpected = homePage.getItemNames().stream().map(WebElement -> WebElement.getText().substring(2)).collect(Collectors.toList());
+        itemPricesExpected = homePage.getItemPrices().stream().map(WebElement::getText).collect(Collectors.toList());
+        System.out.println(itemPricesExpected);
         homePage.openBasket();
-
-        Basket basket = new Basket(driver);
-        List<String> itemNamesActual = basket.getItemNames().stream().map(WebElement::getText).collect(Collectors.toList());
-        List<String> itemPricesActual = basket.getItemPrices().stream().map(WebElement::getText).collect(Collectors.toList());
-
-        //сравнение наименований и цен, полученных на главной странице и в корзине
+        itemNamesActual = basket.getItemNames().stream().map(WebElement::getText).collect(Collectors.toList());
+        itemPricesActual = basket.getItemPrices().stream().map(WebElement::getText).collect(Collectors.toList());
+    }
+    @Test
+    @Order(2)
+    public void comparisonGoodsNames() {
         assertEquals(itemNamesExpected, itemNamesActual);
         assertEquals(itemPricesExpected, itemPricesActual);
-
-        //сравнение количества товаров
+    }
+    @Test
+    @Order(3)
+    public void comparisonGoodsPrices() {
+        assertEquals(itemPricesExpected, itemPricesActual);
+    }
+    @Test
+    @Order(4)
+    public void comparisonGoodsQuantity() {
         assertEquals("Товары, 3 шт.", basket.getTotalQuantity().getText());
-
-        //сравнение суммы товаров
-        int totalSum = 0;
-        for (String itemPrice: itemPricesExpected) {
-            totalSum += Integer.parseInt(itemPrice.substring(0, itemPrice.length()-2));
-        }
+    }
+    @Test
+    @Order(5)
+    public void comparisonGoodsTotalPrices() {
+        int totalSum = itemPricesExpected.stream().mapToInt(itemPrice -> Integer.parseInt(itemPrice.substring(0, itemPrice.length() - 2))).sum();
         String totalSumActual = basket.getTotalPrice().getText().replaceAll("\\s", "");
         assertEquals(totalSum, Integer.parseInt(totalSumActual.substring(0, totalSumActual.length()-1)));
     }
-
-    @AfterEach
-    void teardown() {
+    @AfterAll
+    static void teardown() {
         driver.quit();
     }
-
 }
