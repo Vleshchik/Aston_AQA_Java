@@ -1,9 +1,6 @@
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-
 import java.util.List;
 
 public class Basket {
@@ -19,7 +16,7 @@ public class Basket {
     }
 
     List<WebElement> getItemNames() {
-        itemNames = driver.findElements(By.cssSelector(".item-info__item-name"));
+        itemNames = driver.findElements(By.cssSelector(".good-info__good-name"));
         return itemNames;
     }
 
@@ -35,6 +32,4 @@ public class Basket {
     WebElement getTotalPrice() {
         return driver.findElement(By.xpath("//*[@class='b-top__total line']/span/span"));
     }
-
-
 }
