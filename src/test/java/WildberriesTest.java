@@ -13,6 +13,7 @@ public class WildberriesTest {
     public List<String> itemPricesExpected;
     public List<String> itemPricesActual;
     public List<String> itemNamesActual;
+    public static int totalSum;
     private static Basket basket;
 
     @BeforeAll
@@ -33,7 +34,7 @@ public class WildberriesTest {
         homePage.addItem(2);
         itemNamesExpected = homePage.getItemNames().stream().map(WebElement -> WebElement.getText().substring(2)).collect(Collectors.toList());
         itemPricesExpected = homePage.getItemPrices().stream().map(WebElement::getText).collect(Collectors.toList());
-        System.out.println(itemPricesExpected);
+        totalSum(itemPricesExpected);
         homePage.openBasket();
         itemNamesActual = basket.getItemNames().stream().map(WebElement::getText).collect(Collectors.toList());
         itemPricesActual = basket.getItemPrices().stream().map(WebElement::getText).collect(Collectors.toList());
@@ -57,12 +58,19 @@ public class WildberriesTest {
     @Test
     @Order(5)
     public void comparisonGoodsTotalPrices() {
-        int totalSum = itemPricesExpected.stream().mapToInt(itemPrice -> Integer.parseInt(itemPrice.substring(0, itemPrice.length() - 2))).sum();
         String totalSumActual = basket.getTotalPrice().getText().replaceAll("\\s", "");
         assertEquals(totalSum, Integer.parseInt(totalSumActual.substring(0, totalSumActual.length()-1)));
     }
     @AfterAll
     static void teardown() {
         driver.quit();
+    }
+    public static void totalSum(List<String> prices) {
+        totalSum = 0;
+        for (String price : prices) {
+            String priceWithoutSymbol = price.replace(" ₽", "");
+            int priceValue = Integer.parseInt(priceWithoutSymbol);
+            totalSum += priceValue;
+        }
     }
 }
